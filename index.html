@@ -298,9 +298,14 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
 </head>
 <body><script>
 (function seedDemoData(){
-  var FLAG = 'festq_demo_seeded_v1';
-  if (localStorage.getItem(FLAG)) return; // keep the visitor's own edits across reloads
+  // Always (re)seed on every load so the Meelad Fest sample is guaranteed to
+  // show correctly, even if a previous visit left partial/stale data behind.
+  // A person can still edit things during their visit — it just resets back
+  // to this sample on the next reload/visit, which is what a demo should do.
   var suffix = '__u_demo';
+  Object.keys(localStorage).forEach(function(k){
+    if (k.indexOf(suffix) !== -1) localStorage.removeItem(k);
+  });
   function set(k, v) { localStorage.setItem(k + suffix, JSON.stringify(v)); }
   set("pr_teams", [{"id": 0, "name": "അബൂബക്കർ", "members": [{"id": "m1", "name": "മുഹമ്മദ് ആഷിക്", "score": 92, "pid": 101, "catId": 1}, {"id": "m2", "name": "ഫാത്തിമ സന", "score": 78, "pid": 103, "catId": 2}, {"id": "m3", "name": "അബ്ദുൽ ബാസിത്", "score": 85, "pid": 105, "catId": 3}, {"id": "m4", "name": "ആയിഷ റഹ്‌മ", "score": 41, "pid": 106, "catId": 4}, {"id": "m5", "name": "ടീം അബൂബക്കർ", "score": 88, "pid": 104, "catId": 2}, {"id": "m6", "name": "ടീം അബൂബക്കർ", "score": 90, "pid": 108, "catId": 2}]}, {"id": 1, "name": "ഉമർ", "members": [{"id": "m7", "name": "സൽമാൻ ഫാരിസ്", "score": 95, "pid": 101, "catId": 1}, {"id": "m8", "name": "ഖദീജ നൂർ", "score": 82, "pid": 103, "catId": 2}, {"id": "m9", "name": "യൂസുഫ് ഇർഫാൻ", "score": 80, "pid": 105, "catId": 3}, {"id": "m10", "name": "സഫ വർഷ", "score": 45, "pid": 107, "catId": 5}, {"id": "m11", "name": "ടീം ഉമർ", "score": 91, "pid": 104, "catId": 2}]}, {"id": 2, "name": "ഉസ്മാൻ", "members": [{"id": "m12", "name": "ഇസ്മായിൽ ശാൻ", "score": 88, "pid": 102, "catId": 1}, {"id": "m13", "name": "സൈനബ് ഫിദ", "score": 75, "pid": 103, "catId": 2}, {"id": "m14", "name": "ഹംസ ത്വാഹ", "score": 76, "pid": 105, "catId": 3}, {"id": "m15", "name": "മർയം ശിഫ", "score": 38, "pid": 106, "catId": 4}, {"id": "m16", "name": "ടീം ഉസ്മാൻ", "score": 84, "pid": 108, "catId": 2}]}, {"id": 3, "name": "അലി", "members": [{"id": "m17", "name": "ഇബ്‌റാഹിം നിഹാൽ", "score": 90, "pid": 102, "catId": 1}, {"id": "m18", "name": "ഹലീമ റുഖ്‌സ്", "score": 86, "pid": 103, "catId": 2}, {"id": "m19", "name": "താരിഖ് അൻവർ", "score": 79, "pid": 105, "catId": 3}, {"id": "m20", "name": "സുമയ്യ നിഷ", "score": 47, "pid": 107, "catId": 5}, {"id": "m21", "name": "ടീം അലി", "score": 86, "pid": 104, "catId": 2}]}, {"id": 4, "name": "Team 5", "members": []}, {"id": 5, "name": "Team 6", "members": []}, {"id": 6, "name": "Team 7", "members": []}, {"id": 7, "name": "Team 8", "members": []}, {"id": 8, "name": "Team 9", "members": []}, {"id": 9, "name": "Team 10", "members": []}]);
   set("pr_cats", [{"id": 1, "name": "ഖുർആൻ പാരായണം", "emoji": "📖", "color": 0}, {"id": 2, "name": "മാപ്പിള പാട്ട്", "emoji": "🎤", "color": 1}, {"id": 3, "name": "പ്രസംഗം", "emoji": "🗣️", "color": 2}, {"id": 4, "name": "കവിതാരചന", "emoji": "✍️", "color": 3}, {"id": 5, "name": "ചിത്രരചന", "emoji": "🎨", "color": 4}]);
@@ -311,7 +316,6 @@ footer.app-footer{text-align:center;padding:24px 0 18px;color:var(--muted);font-
   set("pr_live", {"enabled": true, "showScores": true, "showCategory": true});
   set("pr_hist", []);
   set("pr_regs", []);
-  localStorage.setItem(FLAG, '1');
 })();
 </script>
 <!-- ════════ LOGIN ════════ -->
@@ -4365,10 +4369,7 @@ function openPremiumPrompt(pg){
 // instead it resets the sample data back to the original Meelad Fest seed.
 function doLogout(){
   if (!confirm('Demo data എല്ലാം original സാമ്പിളിലേക്ക് reset ചെയ്യണോ? നിങ്ങൾ ചെയ്ത മാറ്റങ്ങൾ നഷ്ടപ്പെടും.')) return;
-  Object.keys(localStorage).forEach(function(k){
-    if (k.indexOf('__u_demo') !== -1 || k === 'festq_demo_seeded_v1') localStorage.removeItem(k);
-  });
-  location.reload();
+  location.reload(); // the seed script wipes & rewrites the sample data on every load
 }
 </script>
 </body>
